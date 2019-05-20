@@ -3,7 +3,7 @@ import Adafruit_ADS1x15
 import sys
 
 try:
-	adc = Adafruit_ADS1x15.ADS1015(address=0x48, busnum=4)
+	adc = Adafruit_ADS1x15.ADS1015(address=0x48, busnum=3)
 except:
 	sys.exit(1)
 
