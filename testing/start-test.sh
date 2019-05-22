@@ -149,7 +149,7 @@ fi
 
 # Sending image to pc
 if [ $camera_error -eq 0 ]; then
-	sx image.jpg
+	sx image01.jpg
 fi
 
 
