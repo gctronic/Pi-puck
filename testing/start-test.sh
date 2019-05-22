@@ -13,6 +13,10 @@ adc_error=0
 rm *.jpg > /dev/null 2>&1
 rm *.wav > /dev/null 2>&1
 
+# Program the FT903
+sudo dfu-util -d 0403:0fde -D /home/pi/Pi-puck/FT903/Pi-puck_FT903_Firmware_DFU.bin
+sleep 3
+
 # I2C switch testing
 #python3 i2c_enable.py
 #ret=$?
