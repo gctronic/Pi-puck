@@ -77,7 +77,11 @@ fi
 
 # Camera image grabbing testing
 if [ $camera_error -eq 0 ]; then
-	/home/pi/Pi-puck/snapshot/snapshot 1 0
+	if [ "$1" != "" ]; then
+		/home/pi/Pi-puck/snapshot/snapshot -d $1
+	else
+		/home/pi/Pi-puck/snapshot/snapshot
+	fi
 	ret=$?
 	if [ $ret -eq 1 ]; then
 		camera_error=5 # Cannot grab an image

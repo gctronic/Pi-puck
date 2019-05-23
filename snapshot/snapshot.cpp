@@ -107,26 +107,51 @@ int main(int argc, char* argv[]) {
     int i = 0;
 	Mat image;
 	int num_grab = 1;
-	int verbose = 1;
+	int verbose = 0;
+	int device_index = 0;
 	char image_name[12] = {0};
+	int opt, opt_index;
 	
-    VideoCapture camera(0);
+	// put ':' in the starting of the string so that program can distinguish between '?' and ':'
+	while((opt = getopt (argc, argv, ":d:n:v")) != -1) {
+		switch(opt) {
+			case 'd':
+				device_index = atoi(optarg);
+				break;
+			case 'n':
+				num_grab = atoi(optarg);
+				if(num_grab > 99) {
+					num_grab = 99; // This is to avoid buffer overflow on the output file name.
+				}				
+				break;
+			case 'v':
+				verbose = 1;
+				break;
+			case ':': // If an option requires a value and no value is given
+				fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+				break;
+			case '?': // Unrecognized option
+				if (isprint (optopt)) {
+					fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+				} else {
+					fprintf (stderr, "Unknown option character `\\x%x'.\n", optopt);
+					exit(1);
+				}
+			default:
+				exit(1);
+		}
+		for (opt_index = optind; opt_index < argc; opt_index++) {
+			printf ("Extra arguments: %s\n", argv[opt_index]);
+		}
+	}
+	
+	
+    VideoCapture camera(device_index);
 	if(!camera.isOpened()) {
 		std::cout << "Cannot open the video device" << std::endl;
-		return -1;
+		exit(1);
 	}
-	
-	if(argc == 2) {
-		num_grab = atoi(argv[1]);
-	} else if(argc == 3) {
-		num_grab = atoi(argv[1]);
-		verbose = atoi(argv[2]);		
-	}
-	
-	if(num_grab > 99) {
-		num_grab = 99; // This is to avoid buffer overflow on the output file name.
-	}
-	
+
 	//camera.set(CV_CAP_PROP_FRAME_WIDTH, 320);
 	//camera.set(CV_CAP_PROP_FRAME_HEIGHT, 240);
 	if(verbose) {
