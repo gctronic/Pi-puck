@@ -1,6 +1,7 @@
 import sys
 import dbus, dbus.mainloop.glib
 from gi.repository import GObject
+from gi.repository import GLib
 from example_advertisement import Advertisement
 from example_advertisement import register_ad_cb, register_ad_error_cb
 from example_gatt_server import Service, Characteristic
@@ -31,16 +32,16 @@ class TxCharacteristic(Characteristic):
 		Characteristic.__init__(self, bus, index, UART_TX_CHARACTERISTIC_UUID,
 								['notify'], service)
 		self.notifying = False
-		GObject.io_add_watch(sys.stdin, GObject.IO_IN, self.on_console_input)
+		#GObject.io_add_watch(sys.stdin, GObject.IO_IN, self.on_console_input)
  
-	def on_console_input(self, fd, condition):
-		#self.send_tx(array.array('H', [1,2,3,4,5,6,7,8]))
-		s = fd.readline()
-		#if s.isspace():
-		#	pass
-		#else:
-		#	self.send_tx(s)
-		return True
+#	def on_console_input(self, fd, condition):
+#		#self.send_tx(array.array('H', [1,2,3,4,5,6,7,8]))
+#		s = fd.readline()
+#		#if s.isspace():
+#		#	pass
+#		#else:
+#		#	self.send_tx(s)
+#		return True
  
 	def send_tx(self, s):
 		if not self.notifying:
@@ -280,7 +281,7 @@ def main():
 	app = UartApplication(bus)
 	adv = UartAdvertisement(bus, 0)
  
-	mainloop = GObject.MainLoop()
+	mainloop = GLib.MainLoop() #GObject.MainLoop()
  
 	service_manager.RegisterApplication(app.get_path(), {},
 										reply_handler=register_app_cb,
