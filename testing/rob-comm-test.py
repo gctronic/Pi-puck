@@ -3,8 +3,8 @@ import sys
 
 I2C_CHANNEL = 4
 ROB_ADDR = 0x1F
-ACTUATORS_SIZE = 19
-SENSORS_SIZE = 30
+ACTUATORS_SIZE = 20
+SENSORS_SIZE = 47
 
 try:
 	bus = SMBus(I2C_CHANNEL)
@@ -30,7 +30,7 @@ if len(sensors_data) < 0:
 	sys.exit(1)
 	
 #print("sel = " + str(sensors_data[24]))
-if sensors_data[24] != 10:
+if (sensors_data[40]&0x0F) != 10:
 	sys.exit(2)
 
 sys.exit(0)
