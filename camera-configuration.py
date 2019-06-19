@@ -3,6 +3,7 @@
 import time
 import sys
 import smbus
+import subprocess
 
 I2C_CHANNEL = 4
 SENSOR_I2C_ADDR = 0x6e
@@ -313,7 +314,7 @@ def po8030_init():
 
 def ov7670_init():
 	bus.write_byte_data(OV7670_ADDR, REG_COM7, 0x80) #Reset to default values.
-	time.sleep(0.1)
+	time.sleep(0.2)
 	bus.write_byte_data(OV7670_ADDR, REG_CLKRC, 0x80) #No internal clock prescaler.
 	bus.write_byte_data(OV7670_ADDR, REG_TSLB, 0x04)
 	bus.write_byte_data(OV7670_ADDR, REG_COM7, COM7_YUV|COM7_FMT_VGA) # Output format: YUV, VGA.
@@ -345,10 +346,21 @@ bus = smbus.SMBus(I2C_CHANNEL)
 
 print('Reading camera ID...')
 
-try:	
-	data = bus.read_i2c_block_data(OV7670_ADDR, 0x0a, 2)
-	print(data)
-	ov7670_detected = True
+try:
+	p = subprocess.call("/home/pi/Pi-puck/camera-configuration")
+	#print(p)
+	if (p == 0):
+		ov7670_detected = True
+	else:
+		print("OV7670 not detected")
+	#data = [0, 0]
+	##data = bus.read_i2c_block_data(OV7670_ADDR, 0x0a, 2)
+	#bus.write_byte(OV7670_ADDR, 0x0a)
+	#data[0] = bus.read_byte(OV7670_ADDR)
+	#bus.write_byte(OV7670_ADDR, 0x0b)
+	#data[1] = bus.read_byte(OV7670_ADDR)
+	#print(data)
+	#ov7670_detected = True
 except OSError as e:
 	print("OV7670 not detected")
 	ov7670_detected = False
@@ -391,12 +403,12 @@ if poXXXX_detected:
 		print('Detected camera sensor: Unknown')
 		sys.exit('Error: Camera sensor not supported')
 
-if ov7670_detected:
-	sensor_id = (data[0] << 8) + data[1]
-	print('Read data: 0x{:04x}'.format(sensor_id))
-	
-	if sensor_id == 0x7673:
-		print('Detected camera sensor: OV7670')
-		ov7670_init()
+#if ov7670_detected:
+#	sensor_id = (data[0] << 8) + data[1]
+#	print('Read data: 0x{:04x}'.format(sensor_id))
+#	
+#	if sensor_id == 0x7673:
+#		print('Detected camera sensor: OV7670')
+#		ov7670_init()
 		
 
