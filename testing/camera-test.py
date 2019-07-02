@@ -3,6 +3,7 @@
 import time
 import sys
 import smbus
+import subprocess
 
 I2C_CHANNEL = 4
 SENSOR_I2C_ADDR = 0x6e
@@ -341,9 +342,10 @@ try:
 except:
 	sys.exit(1)
 	
-try:	
-	data = bus.read_i2c_block_data(OV7670_ADDR, 0x0a, 2)
-	ov7670_detected = True
+try:
+	p = subprocess.call("/home/pi/Pi-puck/camera-configuration")
+	if (p == 0):
+		ov7670_detected = True
 except OSError as e:
 	ov7670_detected = False
 except:
@@ -378,15 +380,15 @@ if poXXXX_detected:
 	else:
 		sys.exit(2)
 
-if ov7670_detected:
-	sensor_id = (data[0] << 8) + data[1]	
-	if sensor_id == 0x7673:
-		try:
-			ov7670_init()
-		except:
-			sys.exit(1)			
-	else:
-		sys.exit(2)
+#if ov7670_detected:
+#	sensor_id = (data[0] << 8) + data[1]	
+#	if sensor_id == 0x7673:
+#		try:
+#			ov7670_init()
+#		except:
+#			sys.exit(1)			
+#	else:
+#		sys.exit(2)
 
 sys.exit(0)
 		
