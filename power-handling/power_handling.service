@@ -1,0 +1,13 @@
+[Unit]
+Description=power handling service
+After=multi-user.target
+
+[Service]
+ExecStart=/home/pi/power-handling 
+WorkingDirectory=/home/pi
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
