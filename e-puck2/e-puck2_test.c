@@ -100,7 +100,7 @@ int main() {
 	}		
 	close(fh1);
 
-	fh = open("/dev/i2c-4", O_RDWR);	// open the I2C dev driver for bus 3
+	fh = open("/dev/i2c-4", O_RDWR);	// open the I2C dev driver for bus 4
 
 	ioctl(fh, I2C_SLAVE, ROBOT_ADDR);			// tell the driver we want the device with address 0x1F (7-bits) on the I2C bus
 
