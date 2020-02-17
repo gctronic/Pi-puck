@@ -104,18 +104,18 @@ int ov7670_init(void) {
 	if(write_i2c(REG_CLKRC, 0x80) < 0) { // No internal clock prescaler.
 		return -1;
 	}	
-	if(write_i2c(REG_TSLB, 0x04) < 0) { 
+	if(write_i2c(REG_TSLB, 0x04) < 0) {  // 0x04 = 0x0c (default) but with YUYV
 		return -1;
-	}	
+	}		
 	if(write_i2c(REG_COM7, COM7_YUV|COM7_FMT_VGA) < 0) {  // Output format: YUV, VGA.
 		return -1;
 	}	
 	if(write_i2c(REG_COM15, COM15_R00FF) < 0) { 
 		return -1;
 	}	
-	if(write_i2c(REG_COM13, 0x00) < 0) { 
+	if(write_i2c(REG_COM13, 0x00) < 0) { // YUYV
 		return -1;
-	}	
+	}
 	if(write_i2c(0xb0, 0x84) < 0) {  // Color mode?? (Not documented!)
 		return -1;
 	}	
@@ -139,6 +139,21 @@ int ov7670_init(void) {
 		return -1;
 	}	
 
+	// Output array is 784x510 => 21'000'000 / (784x510x2) = about 26 fps
+	// To lower the framerate to 15 fps we insert dummy pixels and dummy rows: 21'000'000 / [(784+91)x(510+290)x2] = 15 fps
+	if(write_i2c(0x2a, 0x00) < 0) {  // Dummy pixels MSB
+		return -1;
+	}
+	if(write_i2c(0x2b, 0x5B) < 0) {  // Dummy pixels LSB
+		return -1;
+	}
+	if(write_i2c(0x92, 0x22) < 0) {  // Dummy rows LSB
+		return -1;
+	}
+	if(write_i2c(0x93, 0x01) < 0) {  // Dummy rows LSB
+		return -1;
+	}
+	
 	if(write_i2c(0x0c, 0x00) < 0) { 
 		return -1;
 	}	

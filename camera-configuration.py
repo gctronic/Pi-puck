@@ -319,7 +319,7 @@ def ov7670_init():
 	bus.write_byte_data(OV7670_ADDR, REG_TSLB, 0x04)
 	bus.write_byte_data(OV7670_ADDR, REG_COM7, COM7_YUV|COM7_FMT_VGA) # Output format: YUV, VGA.
 	bus.write_byte_data(OV7670_ADDR, REG_COM15, COM15_R00FF)
-	bus.write_byte_data(OV7670_ADDR, REG_COM13, 0x00)
+	bus.write_byte_data(OV7670_ADDR, REG_COM13, 0x00) # YUYV
 	bus.write_byte_data(OV7670_ADDR, 0xb0, 0x84) # Color mode?? (Not documented!)
 	
 	bus.write_byte_data(OV7670_ADDR, REG_HSTART, 0x13) # start = HSTART<<3 + HREF[2:0] = 19*8 + 6 = 158
@@ -328,6 +328,13 @@ def ov7670_init():
 	bus.write_byte_data(OV7670_ADDR, REG_VSTART, 0x02) # start = VSTART<<2 + VREF[1:0] = 2*4 + 2 = 10
 	bus.write_byte_data(OV7670_ADDR, REG_VSTOP, 0x7a) # stop = VSTOP<<2 + VREF[3:2] = 122*4 + 2 = 490
 	bus.write_byte_data(OV7670_ADDR, REG_VREF, 0x0a)
+
+	# Output array is 784x510 => 21'000'000 / (784x510x2) = about 26 fps
+	# To lower the framerate to 15 fps we insert dummy pixels and dummy rows: 21'000'000 / [(784+91)x(510+290)x2] = 15 fps
+	bus.write_byte_data(OV7670_ADDR, 0x2a, 0x00) # Dummy pixels MSB
+	bus.write_byte_data(OV7670_ADDR, 0x2b, 0x5B) # Dummy pixels LSB
+	bus.write_byte_data(OV7670_ADDR, 0x92, 0x22) # Dummy rows LSB
+	bus.write_byte_data(OV7670_ADDR, 0x93, 0x01) # Dummy rows MSB
 	
 	bus.write_byte_data(OV7670_ADDR, 0x0c, 0x00)
 	bus.write_byte_data(OV7670_ADDR, 0x3e, 0x00)
