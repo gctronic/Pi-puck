@@ -259,18 +259,18 @@ def main():
 	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 	bus = dbus.SystemBus()
 	
+	adapter = find_adapter(bus)
+	if not adapter:
+		print('BLE adapter not found')
+		return	
+	
  	#_print_tree(bus)
 	clear_cached_data(bus)
 	#_props = dbus.Interface(bus.get_object(BLUEZ_SERVICE_NAME, adapter), 'org.freedesktop.DBus.Properties')
 	#_props.Set('org.bluez.Adapter1', 'Pairable', False)
 	#print("\n\n\n\n\n\n\n")
 	#_print_tree(bus)
-	#time.sleep(3)	
-	
-	adapter = find_adapter(bus)
-	if not adapter:
-		print('BLE adapter not found')
-		return
+	#time.sleep(3)
  
 	service_manager = dbus.Interface(
 								bus.get_object(BLUEZ_SERVICE_NAME, adapter),

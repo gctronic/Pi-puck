@@ -11,6 +11,8 @@
 #include <unistd.h>
 
 #define RANDB_ADDR 0x20
+#define I2C_CHANNEL "/dev/i2c-12"
+#define LEGACY_I2C_CHANNEL "/dev/i2c-4"
 
 int fh;
 uint8_t i = 0;
@@ -74,7 +76,14 @@ int write_reg(uint8_t reg, int count, uint8_t *data) {
 
 int main() {
 
-	fh = open("/dev/i2c-4", O_RDWR);	// Open the I2C dev driver for bus 3.
+	fh = open(I2C_CHANNEL, O_RDWR);
+	if(fh < 0) { // Try with bus number used in older kernel
+		fh = open(LEGACY_I2C_CHANNEL, O_RDWR);	
+		if(fh < 0) {
+			perror("Cannot open I2C device");
+			return -1;
+		}
+	}
 
 	ioctl(fh, I2C_SLAVE, RANDB_ADDR);	// Tell the driver we want the device with address 0x20 on the I2C bus.
 

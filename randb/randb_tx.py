@@ -3,7 +3,8 @@ import sys
 import time
 import struct
 
-I2C_CHANNEL = 4
+I2C_CHANNEL = 12
+LEGACY_I2C_CHANNEL = 4
 RANDB_ADDR = 0x20
 
 bus = None
@@ -52,7 +53,11 @@ def read_reg(reg, count):
 try:
 	bus = SMBus(I2C_CHANNEL)
 except:
-	sys.exit(1)
+	try:
+		bus = SMBus(LEGACY_I2C_CHANNEL)
+	except:
+		print("Cannot open I2C device")
+		sys.exit(1)
 
 
 while 1:

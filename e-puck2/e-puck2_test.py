@@ -2,7 +2,8 @@ from smbus2 import SMBus, i2c_msg
 import sys
 import time
 
-I2C_CHANNEL = 4
+I2C_CHANNEL = 12
+LEGACY_I2C_CHANNEL = 4
 ROB_ADDR = 0x1F
 ACTUATORS_SIZE = (19+1) # Data + checksum.
 SENSORS_SIZE = (46+1) # Data + checksum.
@@ -28,7 +29,11 @@ def update_robot_sensors_and_actuators():
 try:
 	bus = SMBus(I2C_CHANNEL)
 except:
-	sys.exit(1)
+	try:
+		bus = SMBus(LEGACY_I2C_CHANNEL)
+	except:
+		print("Cannot open I2C device")
+		sys.exit(1)
 
 
 counter = 0

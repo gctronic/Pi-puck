@@ -128,7 +128,6 @@ else
 fi
 
 # Battery testing
-sudo rmmod ads1015 > /dev/null 2>&1
 if [ $i2c_switch_error -eq 0 ]; then
 	python3 battery-test.py
 	ret=$?

@@ -3,7 +3,8 @@ import sys
 import time
 import struct
 
-I2C_CHANNEL = 4
+I2C_CHANNEL = 12
+LEGACY_I2C_CHANNEL = 4
 NUM_SAMPLES_CALIBRATION = 20
 GRAVITY_MPU9250 = 16384 # To be defined...1 g for 16 bits accelerometer
 AK8963_ADDRESS = 0x0C # Address of magnetometer
@@ -118,7 +119,11 @@ def calibrateGyro():
 try:
 	bus = SMBus(I2C_CHANNEL)
 except:
-	sys.exit(1)
+	try:
+		bus = SMBus(LEGACY_I2C_CHANNEL)
+	except:
+		print("Cannot open I2C device")
+		sys.exit(1)
 
 # Gyro full scale.
 #write_reg(GYRO_CONFIG, 0)

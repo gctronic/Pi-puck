@@ -13,7 +13,8 @@
 #include <sys/ioctl.h>
 #include <stdint.h>
 
-#define I2C_CHANNEL 4
+#define I2C_CHANNEL "/dev/i2c-12"
+#define LEGACY_I2C_CHANNEL "/dev/i2c-4"
 #define OV7670_ADDR 0x21
 
 /*######################
@@ -44,7 +45,6 @@
 #define COM13_UVSAT 0x40 	// UV saturation auto adjustment
 
 int file = -1;
-char filename[20] = {0};
 uint8_t data[2];
 uint32_t sensor_id = 0;
 
@@ -181,12 +181,14 @@ int ov7670_init(void) {
 
 int main(int argc, char *argv[]) {
 
-	sprintf( filename, "/dev/i2c-%d", 4);
-	if ((file = open(filename, O_RDWR)) < 0) {
-		/* ERROR HANDLING: you can check errno to see what went wrong */
-		perror("Failed to open the i2c bus");
-		exit(1);
-	}	
+	file = open(I2C_CHANNEL, O_RDWR);
+	if(file < 0) { // Try with bus number used in older kernel
+		file = open(LEGACY_I2C_CHANNEL, O_RDWR);	
+		if(file < 0) {
+			perror("Cannot open I2C camera device");
+			exit(1);
+		}
+	}
 	
 	/* open device to communicate with */
 	//if (ioctl(file, I2C_SLAVE_FORCE, OV7670_ADDR) < 0) {

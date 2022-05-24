@@ -13,6 +13,8 @@
 #define ACTUATORS_SIZE (19+1) // Data + checksum.
 #define SENSORS_SIZE (46+1) // Data + checksum.
 #define ROBOT_ADDR 0x1F
+#define I2C_CHANNEL "/dev/i2c-12"
+#define LEGACY_I2C_CHANNEL "/dev/i2c-4"
 
 int fh;
 uint8_t actuators_data[ACTUATORS_SIZE];
@@ -100,7 +102,14 @@ int main() {
 	}		
 	close(fh1);
 
-	fh = open("/dev/i2c-4", O_RDWR);	// open the I2C dev driver for bus 4
+	fh = open(I2C_CHANNEL, O_RDWR);
+	if(fh < 0) { // Try with bus number used in older kernel
+		fh = open(LEGACY_I2C_CHANNEL, O_RDWR);	
+		if(fh < 0) {
+			perror("Cannot open I2C device");
+			return -1;
+		}
+	}
 
 	ioctl(fh, I2C_SLAVE, ROBOT_ADDR);			// tell the driver we want the device with address 0x1F (7-bits) on the I2C bus
 

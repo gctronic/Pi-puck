@@ -25,11 +25,28 @@
 import time
 import VL53L0X
 
-# Create a VL53L0X object
-tof = VL53L0X.VL53L0X(i2c_bus=4,i2c_address=0x29)
-# I2C Address can change before tof.open()
-# tof.change_address(0x32)
-tof.open()
+I2C_CHANNEL = 12
+LEGACY_I2C_CHANNEL = 4
+
+tof = None
+
+try:
+	# Create a VL53L0X object
+	tof = VL53L0X.VL53L0X(i2c_bus=I2C_CHANNEL, i2c_address=0x29)
+	# I2C Address can change before tof.open()
+	# tof.change_address(0x32)
+	tof.open()
+except:
+	try:
+		# Create a VL53L0X object
+		tof = VL53L0X.VL53L0X(i2c_bus=LEGACY_I2C_CHANNEL, i2c_address=0x29)
+		# I2C Address can change before tof.open()
+		# tof.change_address(0x32)
+		tof.open()
+	except:
+		print("Cannot open I2C device")
+		sys.exit(1)
+
 # Start ranging
 tof.start_ranging(VL53L0X.Vl53l0xAccuracyMode.BETTER)
 

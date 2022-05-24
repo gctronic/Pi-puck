@@ -2,15 +2,23 @@
 
 import time
 import sys
-import smbus
+from smbus2 import SMBus
 
-
-I2C_CHANNEL = 3
+BOARD_I2C_CHANNEL = 11
+BOARD_LEGACY_I2C_CHANNEL = 3
 FT903_I2C_ADDR = 0x1C
 loop = 0
+bus = None
 
 try:
-	bus = smbus.SMBus(I2C_CHANNEL)
+	bus = SMBus(BOARD_I2C_CHANNEL)
+except:
+	try:
+		bus = SMBus(BOARD_LEGACY_I2C_CHANNEL)
+	except:
+		sys.exit(1)
+
+try:
 	for loop in range (0,3):
 		bus.write_byte_data(FT903_I2C_ADDR, 0x00, 0x01) # Set LED1 to red
 		bus.write_byte_data(FT903_I2C_ADDR, 0x01, 0x01) # Set LED2 to red

@@ -11,6 +11,8 @@
 #include <unistd.h>
 
 #define ROBOT_ADDR 0x1F
+#define I2C_CHANNEL "/dev/i2c-12"
+#define LEGACY_I2C_CHANNEL "/dev/i2c-4"
 
 #define RING_LEDS		0x00
 #define FRONT_BODY_LEDS	0x01
@@ -108,7 +110,14 @@ int main() {
 	}		
 	close(fh1);	
 	
-	fh = open("/dev/i2c-4", O_RDWR);	// open the I2C dev driver for bus 4
+	fh = open(I2C_CHANNEL, O_RDWR);
+	if(fh < 0) { // Try with bus number used in older kernel
+		fh = open(LEGACY_I2C_CHANNEL, O_RDWR);	
+		if(fh < 0) {
+			perror("Cannot open I2C device");
+			return -1;
+		}
+	}
 
 	ioctl(fh, I2C_SLAVE, ROBOT_ADDR);
 

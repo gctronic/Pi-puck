@@ -68,7 +68,7 @@ gpio=16=op,dh
 gpio=22=op,dh
 
 # PiPuck configuration
-dtoverlay=pi-puck-v4_0
+dtoverlay=pi-puck
 dtparam=shutdown_key_disable
 #dtparam=soft_i2c
 dtparam=uart_disable

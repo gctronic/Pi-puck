@@ -2,10 +2,11 @@
 
 import time
 import sys
-import smbus
+from smbus2 import SMBus
 import subprocess
 
-I2C_CHANNEL = 4
+I2C_CHANNEL = 12
+LEGACY_I2C_CHANNEL = 4
 SENSOR_I2C_ADDR = 0x6e
 OV7670_ADDR = 0x21
 
@@ -338,9 +339,12 @@ def ov7670_init():
 	bus.write_byte_data(OV7670_ADDR, 0xa2, 0x02)
 	
 try:
-	bus = smbus.SMBus(I2C_CHANNEL)
+	bus = SMBus(I2C_CHANNEL)
 except:
-	sys.exit(1)
+	try:
+		bus = SMBus(LEGACY_I2C_CHANNEL)
+	except:
+		sys.exit(1)
 	
 try:
 	p = subprocess.call("/home/pi/Pi-puck/camera-configuration")

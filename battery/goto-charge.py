@@ -6,12 +6,14 @@ import sys
 from smbus2 import SMBus, i2c_msg
 import subprocess
 
-I2C_CHANNEL = 4
+I2C_CHANNEL = 12
+LEGACY_I2C_CHANNEL = 4
 ROB_ADDR = 0x1F
 ACTUATORS_SIZE = (19+1) # Data + checksum.
 SENSORS_SIZE = (46+1) # Data + checksum.
 
-I2C_CHANNEL_FT903 = 3
+I2C_CHANNEL_FT903 = 11
+LEGACY_I2C_CHANNEL_FT903 = 3
 FT903_I2C_ADDR = 0x1C
 
 CHARGE_PIN = 13
@@ -51,19 +53,26 @@ if not pi.connected:
 pi.set_mode(CHARGE_PIN, pigpio.INPUT)
 pi.set_pull_up_down(CHARGE_PIN, pigpio.PUD_OFF)
 
+
 try:
 	bus = SMBus(I2C_CHANNEL)
 except:
-	print("Cannot open robot i2c bus: " + str(sys.exc_info()[0]))
-	sys.exit(1)
+	try:
+		bus = SMBus(LEGACY_I2C_CHANNEL)
+	except:
+		print("Cannot open I2C device: " + str(sys.exc_info()[0]))
+		sys.exit(1)
 
 try:
 	bus_ft903 = SMBus(I2C_CHANNEL_FT903)
 except:
-	print("Cannot open ft903 i2c bus: " + str(sys.exc_info()[0]))
-	sys.exit(1)	
+	try:
+		bus_ft903 = SMBus(LEGACY_I2C_CHANNEL_FT903)
+	except:
+		print("Cannot open ft903 I2C bus: " + str(sys.exc_info()[0]))
+		sys.exit(1)
 
-	
+
 #def signal_handler(sig, frame):
 #		actuators_data[0] = 0
 #		actuators_data[1] = 0

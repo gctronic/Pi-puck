@@ -2,7 +2,8 @@ from smbus2 import SMBus, i2c_msg
 import sys
 import time
 
-I2C_CHANNEL = 4
+I2C_CHANNEL = 12
+LEGACY_I2C_CHANNEL = 4
 GROUNDSENSOR_ADDRESS = 0x60  # Device address
 
 groundData = bytearray([0] * 6)
@@ -26,7 +27,11 @@ def read_reg(reg, count):
 try:
 	bus = SMBus(I2C_CHANNEL)
 except:
-	sys.exit(1)
+	try:
+		bus = SMBus(LEGACY_I2C_CHANNEL)
+	except:
+		print("Cannot open I2C device")
+		sys.exit(1)
 
 while 1:
 

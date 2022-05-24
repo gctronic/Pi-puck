@@ -9,7 +9,18 @@ gpio write 27 1
 # Wait for the device to reset, then send DFU enable command over I2C
 sleep 1
 echo Sending DFU enable I2C command...
-i2cset -y 3 0x1c 0xff
+i2cset -y 11 0x1c 0xff
+ret=$?
+if [ $ret -eq 1 ]; then
+	echo Cannot open I2C device, try legacy I2C channel...
+		i2cset -y 3 0x1c 0xff
+		ret=$?
+		if [ $ret -eq 1 ]; then
+			echo Cannot open I2C device, terminate
+			exit 1
+		fi
+fi
+
 
 # Wait for the USB interface to enumerate, then program the firmware
 sleep 2

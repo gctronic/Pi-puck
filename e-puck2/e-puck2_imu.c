@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#define I2C_CHANNEL "/dev/i2c-12"
+#define LEGACY_I2C_CHANNEL "/dev/i2c-4"
+
 #define NUM_SAMPLES_CALIBRATION 20
 //#define GRAVITY_LSM330 16384    // 1 g for 16 bits accelerometer
 #define GRAVITY_MPU9250 16384    // ### to define ...1 g for 16 bits accelerometer
@@ -108,7 +111,14 @@ void calibrateGyro() {
 
 int main() {
 
-	fh = open("/dev/i2c-4", O_RDWR);	// open the I2C dev driver for bus 4
+	fh = open(I2C_CHANNEL, O_RDWR);
+	if(fh < 0) { // Try with bus number used in older kernel
+		fh = open(LEGACY_I2C_CHANNEL, O_RDWR);	
+		if(fh < 0) {
+			perror("Cannot open I2C device");
+			return -1;
+		}
+	}
 
 	printf("0 for accelerometer, 1 for gyroscope:");
 	scanf("%d", &choice);
